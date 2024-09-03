@@ -16,7 +16,7 @@ app.post("/tasks", async (req, res) => {
         .json({ message: "Title, description, and status are required" })
     }
 
-    if (statusValue.includes(status) === false) {
+    if (!statusValue.includes(status)) {
       return res
         .status(400)
         .json({ message: "Status must be pending or completed" })
@@ -108,6 +108,7 @@ app.put("/tasks/:id", async (req, res) => {
       return res.status(400).json({ message: "id is not valid" })
     }
 
+    const connection = await oracledb.getConnection(dbConfig)
     const isTaskExist = await connection.execute(
       "SELECT * FROM task WHERE id = :id",
       [id]
@@ -125,13 +126,12 @@ app.put("/tasks/:id", async (req, res) => {
         .json({ message: "Title, description, and status are required" })
     }
 
-    if (statusValue.includes(status) === false) {
+    if (!statusValue.includes(status)) {
       return res
         .status(400)
         .json({ message: "Status must be pending or completed" })
     }
 
-    const connection = await oracledb.getConnection(dbConfig)
     await connection.execute(
       "UPDATE task SET title = :title, description = :description, status = :status WHERE id = :id",
       [title, description, status, id],
@@ -161,6 +161,7 @@ app.delete("/tasks/:id", async (req, res) => {
       return res.status(400).json({ message: "id is not valid" })
     }
 
+    const connection = await oracledb.getConnection(dbConfig)
     const isTaskExist = await connection.execute(
       "SELECT * FROM task WHERE id = :id",
       [id]
@@ -170,7 +171,6 @@ app.delete("/tasks/:id", async (req, res) => {
       return res.status(404).json({ message: "Task not found" })
     }
 
-    const connection = await oracledb.getConnection(dbConfig)
     await connection.execute("DELETE FROM task WHERE id = :id", [id], {
       autoCommit: true,
     })

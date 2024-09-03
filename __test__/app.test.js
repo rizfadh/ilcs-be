@@ -2,7 +2,7 @@ import request from "supertest"
 import app from "../app.js"
 
 describe("POST /tasks", () => {
-  it("should return 201 and Task created successfully", async () => {
+  it("should return 201 and a message", async () => {
     const response = await request(app).post("/tasks").send({
       title: "Task 1",
       description: "Description 1",
@@ -12,7 +12,7 @@ describe("POST /tasks", () => {
     expect(response.body.message).toEqual("Task created successfully")
   })
 
-  it("should return 400 and Title, description, and status are required when title, description, and status are empty", async () => {
+  it("should return 400 and a message when title, description, and status are empty", async () => {
     const response = await request(app).post("/tasks").send({})
     expect(response.statusCode).toEqual(400)
     expect(response.body.message).toEqual(
@@ -20,7 +20,7 @@ describe("POST /tasks", () => {
     )
   })
 
-  it("should return 400 and Status must be pending or completed when status is invalid", async () => {
+  it("should return 400 and a message when status is invalid", async () => {
     const response = await request(app).post("/tasks").send({
       title: "Task 1",
       description: "Description 1",
